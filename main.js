@@ -31,7 +31,11 @@ client.on('message', async msg => {
 	let command = msg.content.toLowerCase().split(' ')[0];
 	command = command.slice(PREFIX.length)
 
-	if (command === 'play') {
+	if(msg.content === `${PREFIX}mping`){
+		msg.channel.send(`${Math.round(client.ping)}ms :ping_pong:`)
+	}
+	
+	if (msg.content.startsWith(`${PREFIX}play`)) {
 		const voiceChannel = msg.member.voiceChannel;
 		if (!voiceChannel) return msg.channel.send(':x: You must be in a voice channel!');
 		const permissions = voiceChannel.permissionsFor(msg.client.user);
@@ -81,42 +85,42 @@ client.on('message', async msg => {
 			}
 			return handleVideo(video, msg, voiceChannel);
 		}
-	} else if (command === 'skip') {
+	} else if (msg.content.startsWith(`${PREFIX}skip`)) {
 		if (!msg.member.voiceChannel) return msg.channel.send(':x: You are not in a voice channel!');
 		if (!serverQueue) return msg.channel.send(':x: here is nothing playing that I could skip for you.');
 		serverQueue.connection.dispatcher.end(':track_next:  **Skipping...**');
 		return undefined;
-	} else if (command === 'stop') {
+	} else if (msg.content.startsWith(`${PREFIX}stop`)) {
 		if (!msg.member.voiceChannel) return msg.channel.send(':x: You are not in a voice channel!');
 		if (!serverQueue) return msg.channel.send(':x: There is nothing playing that I could stop for you.');
 		serverQueue.songs = [];
 		serverQueue.connection.dispatcher.end(':stop_button: **Stopped**');
 		return undefined;
-	} else if (command === 'volume') {
+	} else if (msg.content.startsWith(`${PREFIX}volume`)) {
 		if (!msg.member.voiceChannel) return msg.channel.send('You are not in a voice channel!');
 		if (!serverQueue) return msg.channel.send('There is nothing playing.');
-		if (!args[1]) return msg.channel.send(`:control_knobs: The current volume is: **${serverQueue.volume}**`);
-		serverQueue.volume = args[1];
-		serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 5);
-		return msg.channel.send(`:control_knobs: I set the volume to: **${args[1]}**`);
-	} else if (command === 'np') {
+		if (!args[2]) return msg.channel.send(`:control_knobs: The current volume is: **${serverQueue.volume}**`);
+		serverQueue.volume = args[2];
+		serverQueue.connection.dispatcher.setVolumeLogarithmic(args[2] / 5);
+		return msg.channel.send(`:control_knobs: I set the volume to: **${args[2]}**`);
+	} else if (msg.content.startsWith(`${PREFIX}np`)) {
 		if (!serverQueue) return msg.channel.send('There is nothing playing.');
 		return msg.channel.send(`🎶 Now playing: **${serverQueue.songs[0].title}**`);
-	} else if (command === 'queue') {
+	} else if (msg.content.startsWith(`${PREFIX}queue`)) {
 		if (!serverQueue) return msg.channel.send(':x: There is nothing playing.');
 		return msg.channel.send(`
                 __**Song queue:**__
                 ${serverQueue.songs.map(song => `**-** ${song.title}`).join('\n')}
                 **Now playing:** ${serverQueue.songs[0].title}
 		`);
-	} else if (command === 'pause') {
+	} else if (msg.content.startsWith(`${PREFIX}pause`)) {
 		if (serverQueue && serverQueue.playing) {
 			serverQueue.playing = false;
 			serverQueue.connection.dispatcher.pause();
 			return msg.channel.send('⏸ Paused the music for you!');
 		}
 		return msg.channel.send(':x: There is nothing playing.');
-	} else if (command === 'resume') {
+	} else if (msg.content.startsWith(`${PREFIX}resume`)) {
 		if (serverQueue && !serverQueue.playing) {
 			serverQueue.playing = true;
 			serverQueue.connection.dispatcher.resume();
