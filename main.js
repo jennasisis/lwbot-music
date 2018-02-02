@@ -9,6 +9,21 @@ const youtube = new YouTube(GOOGLE_API_KEY);
 
 const queue = new Map();
 
+client.on('message', async message => {
+    if (message.author.bot) return undefined;
+
+    var name = message.member.nickname || message.author.username
+    
+    if(message.channel.id === "382585019300053015" && message.content.startsWith('')){
+        client.channels.get('408801065949986827').send(`${name} >> ${message.content}`);
+    }
+
+    if(message.channel.id === "408801065949986827" && message.content.startsWith('')){
+        message.delete();
+        client.channels.get('382585019300053015').send(`${message.content}`);
+    }
+});
+
 client.on('warn', console.warn);
 
 client.on('error', console.error);
@@ -117,14 +132,14 @@ client.on('message', async msg => {
 		if (serverQueue && serverQueue.playing) {
 			serverQueue.playing = false;
 			serverQueue.connection.dispatcher.pause();
-			return msg.channel.send('⏸ Paused the music for you!');
+			return msg.channel.send('⏸ ***Paused***');
 		}
 		return msg.channel.send(':x: There is nothing playing.');
 	} else if (msg.content.startsWith(`${PREFIX}resume`)) {
 		if (serverQueue && !serverQueue.playing) {
 			serverQueue.playing = true;
 			serverQueue.connection.dispatcher.resume();
-			return msg.channel.send(':arrow_forward:  Resumed the music for you!');
+			return msg.channel.send(':arrow_forward: ***Resumed***');
 		}
 		return msg.channel.send(':x: There is nothing playing.');
 	}
